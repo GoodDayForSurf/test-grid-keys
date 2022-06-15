@@ -31,6 +31,7 @@
 
     <!--<script type="text/javascript" src="../artifacts/js/dx.all.debug.js" charset="utf-8"></script>-->
     <script type="text/javascript" src="dx.all.js" charset="utf-8"></script>
+    <!--<script type="text/javascript" src="C:\_work_projects\myfork_DevExtreme\artifacts\js\dx.all.js" charset="utf-8"></script>-->
 </head>
 <body>
 
@@ -40,6 +41,10 @@
         $(() => {
             const dataGrid = $('#gridContainer').dxDataGrid({
                 dataSource: employees,
+                searchPanel: {
+                    visible: true,
+                    text: "'text for search'"
+                },
                 selection: {
                     mode: 'multiple'
                 },
