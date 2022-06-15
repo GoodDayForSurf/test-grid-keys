@@ -40,6 +40,9 @@
         $(() => {
             const dataGrid = $('#gridContainer').dxDataGrid({
                 dataSource: employees,
+                selection: {
+                    mode: 'multiple'
+                },
 
                 showBorders: true,
                 paging: {
