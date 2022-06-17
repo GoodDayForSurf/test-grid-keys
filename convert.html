@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+    <style>
+        input { font-size: 32px;}
+    </style>
+    <title>Document</title>
+</head>
+<body>
+<div >
+    <div style="display: flex; align-items: baseline">
+        <div>RUB (buy for AMD <span id="rub_amd">0</span>)</div>
+        <input id="rub_inp" type="number" style="margin: 10px;">
+    </div>
+
+    <h3>RUB-USD = <span id="rub_usd"></span></h3>
+
+    <div style="display: flex;align-items: baseline">
+        <div>USD (sell for AMD <span id="amd_usd">0</span>)</div>
+        <input id="usd_inp" type="number" style="margin: 10px;">
+    </div>
+</div>
+<script>
+    const RUB_AMD = 6.8;
+    const AMD_USD = 435;
+
+    $('#rub_amd').text(RUB_AMD)
+    $('#amd_usd').text(AMD_USD)
+    $('#rub_usd').text( rnd(AMD_USD / RUB_AMD))
+
+    $('#rub_inp').on('keyup', (v, el )=> {
+        console.log($('#usd_inp'))
+
+        const value = v.target.value * RUB_AMD / AMD_USD
+        $('#usd_inp')[0].value = rnd(value)
+    })
+
+    $('#usd_inp').on('keyup', (v, el )=> {
+        const value = v.target.value * AMD_USD / RUB_AMD;
+        $('#rub_inp')[0].value = rnd(value)
+    })
+
+    function rnd(val) {
+        return (Math.round(val * 100 ) / 100).toFixed(2)
+    }
+
+</script>
+</body>
+</html>
