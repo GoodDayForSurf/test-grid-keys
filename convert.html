@@ -11,56 +11,85 @@
     <style>
         input {
             font-size: 32px;
-            width: 100%;
             margin: 0;
+            margin-right: 10px;
         }
     </style>
     <title>Document</title>
 </head>
 <body>
 <div style="display: flex; flex-direction: column">
-    <div style="display: flex;flex-direction:column;align-items: baseline">
+    <div style="display: flex;flex-direction:column;align-items: stretch">
         <div>RUB buy for AMD <input type="number" step="0.1" style="width:70px;font-size: 24px" id="rub_amd"></input></div>
         <input id="rub_inp" type="number" style="margin-top:20px;">
     </div>
 
     <h3>RUB-USD = <span id="rub_usd"></span></h3>
 
-    <div style="display: flex;flex-direction:column;align-items: baseline">
+    <div style="display: flex;flex-direction:column;align-items: stretch">
         <div>USD sell for AMD <input type="number" style="width:70px;font-size: 24px" id="amd_usd"></div>
         <input id="usd_inp" type="number" style="margin-top:20px">
     </div>
 </div>
 
-
-</iframe>
 <script>
-    const RUB_AMD = 6.8;
-    const AMD_USD = 435;
+    let RUB_AMD = 6.8;
+    let AMD_USD = 434;
     const usd_inp = $('#usd_inp');
     const rub_inp = $('#rub_inp');
-    let lastUsedInput = rub_inp;
+    let lastUsedInput = usd_inp;
 
     $('#rub_amd')[0].value = (RUB_AMD);
     $('#amd_usd')[0].value = (AMD_USD)
-    $('#rub_usd').text( rnd(AMD_USD / RUB_AMD))
 
-    rub_inp.on('keyup', (v, el )=> {
+    usd_inp[0].value = 1000;
+    calcRub();
+
+
+    rub_inp.on('keyup change', (v, el )=> {
         lastUsedInput = rub_inp;
-        const value = v.target.value * RUB_AMD / AMD_USD
-        $('#usd_inp')[0].value = rnd(value)
+        calcUsd();
+
     })
 
-    usd_inp.on('keyup', (v, el )=> {
+    usd_inp.on('keyup change', (v, el )=> {
         lastUsedInput = usd_inp;
-        const value = v.target.value * AMD_USD / RUB_AMD;
-        $('#rub_inp')[0].value = rnd(value)
+        calcRub();
     })
 
+    $('#amd_usd').on('keyup change', e => {
+        AMD_USD = +e.target.value;
+        setValues();
+        recalcLast();
 
+    })
+
+    $('#rub_amd').on('keyup change', e => {
+        RUB_AMD = +e.target.value;
+        setValues();
+        recalcLast();
+    })
+
+    function recalcLast() {
+        lastUsedInput === rub_inp ?  calcUsd() : calcRub();
+    }
+
+ function calcUsd() {
+     const value = rub_inp[0].value * RUB_AMD / AMD_USD
+     usd_inp[0].value = rnd(value)
+ }
+
+ function calcRub() {
+     const value = usd_inp[0].value * AMD_USD / RUB_AMD;
+     rub_inp[0].value = rnd(value)
+ }
 
     function rnd(val) {
         return (Math.round(val * 100 ) / 100).toFixed(2)
+    }
+
+    function setValues() {
+        $('#rub_usd').text( rnd(AMD_USD / RUB_AMD))
     }
 
 
