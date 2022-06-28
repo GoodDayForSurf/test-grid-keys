@@ -5,8 +5,6 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta http-equiv="Access-Control-Allow-Origin" content="*">
-    <meta http-equiv="X-Frame-Options" content="ALLOW-FROM https://www.sas.am">
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
     <style>
         input {
@@ -14,20 +12,52 @@
             margin: 0;
             margin-right: 10px;
         }
+
+        .btn {
+            font-size: 24px;
+        }
+
+        .mr20 {
+            margin-right: 20px;
+        }
+
+        .mr10 {
+            margin-right: 10px;
+        }
+
+        .ph10 {
+            padding: 0 10px;
+        }
     </style>
     <title>Document</title>
 </head>
 <body>
 <div style="display: flex; flex-direction: column">
     <div style="display: flex;flex-direction:column;align-items: stretch">
-        <div>RUB buy for AMD <input type="number" step="0.1" style="width:70px;font-size: 24px" id="rub_amd"></input></div>
-        <input id="rub_inp" type="number" style="margin-top:20px;">
+        <div style="display: flex;align-items: baseline">
+            <span class="mr20">RUB buy for AMD</span> <input type="number" step="0.1" style="width:70px;font-size: 24px" id="rub_amd"></input>
+            <button onclick="const el = $('#rub_amd'); el.val(rnd(el[0].valueAsNumber + 0.05));rub_amd_cahnge();" class="btn mr10">+</button>
+            <button onclick="const el = $('#rub_amd'); el.val(rnd(el[0].valueAsNumber - 0.05));rub_amd_cahnge()" class="btn mr20 ph10">-</button>
+        </div>
+        <div style="display: flex;align-items: baseline">
+            <input id="rub_inp" type="number" style="margin-top:20px;">
+
+        </div>
+    </div>
+
+    <div style="display: flex;flex-direction:row;align-items: baseline">
+       <h3>AMD&nbsp;</h3>
+        <input id="amd_inp" type="number" style="margin-top:20px;">
     </div>
 
     <h3>RUB-USD = <span id="rub_usd"></span></h3>
 
     <div style="display: flex;flex-direction:column;align-items: stretch">
-        <div>USD sell for AMD <input type="number" style="width:70px;font-size: 24px" id="amd_usd"></div>
+        <div>USD sell for AMD <input type="number" style="width:90px;font-size: 24px" id="amd_usd">
+            <button onclick="const el = $('#amd_usd'); el.val(rnd(el[0].valueAsNumber + 1));amd_usd_change();" class="btn mr10">+</button>
+            <button onclick="const el = $('#amd_usd'); el.val(rnd(el[0].valueAsNumber - 1));amd_usd_change()" class="btn mr20 ph10">-</button>
+
+        </div>
         <input id="usd_inp" type="number" style="margin-top:20px">
     </div>
 </div>
@@ -37,13 +67,18 @@
     let AMD_USD = 434;
     const usd_inp = $('#usd_inp');
     const rub_inp = $('#rub_inp');
+    const amd_inp = $('#amd_inp');
     let lastUsedInput = usd_inp;
 
     $('#rub_amd')[0].value = (RUB_AMD);
-    $('#amd_usd')[0].value = (AMD_USD)
+    $('#amd_usd')[0].value = (AMD_USD);
+
+    setValues();
 
     usd_inp[0].value = 1000;
     calcRub();
+    calcUsd();
+
 
 
     rub_inp.on('keyup change', (v, el )=> {
@@ -57,26 +92,45 @@
         calcRub();
     })
 
-    $('#amd_usd').on('keyup change', e => {
-        AMD_USD = +e.target.value;
-        setValues();
-        recalcLast();
-
+    amd_inp.on('keyup change', (e, el )=> {
+        // lastUsedInput = usd_inp;
+        calcUsd({amd: e.target.value*1});
+        calcRub();
     })
 
-    $('#rub_amd').on('keyup change', e => {
-        RUB_AMD = +e.target.value;
+
+    amd_usd_change = val => {
+        AMD_USD = val? +val : $('#amd_usd')[0].valueAsNumber;
         setValues();
         recalcLast();
+    }
+    $('#amd_usd').on('keyup change', e => {
+        amd_usd_change(+e.target.value)
+    })
+
+
+    rub_amd_cahnge = val => {
+        RUB_AMD = val? +val : $('#rub_amd')[0].valueAsNumber;
+        setValues();
+        recalcLast();
+    }
+
+    $('#rub_amd').on('keyup change', e => {
+        rub_amd_cahnge(+e.target.value)
     })
 
     function recalcLast() {
         lastUsedInput === rub_inp ?  calcUsd() : calcRub();
     }
 
- function calcUsd() {
-     const value = rub_inp[0].value * RUB_AMD / AMD_USD
-     usd_inp[0].value = rnd(value)
+ function calcUsd({amd} = {amd: null}) {
+     const value_amd = amd || (rub_inp[0].value * RUB_AMD);
+     const value_usd = value_amd / AMD_USD;
+     usd_inp[0].value = rnd(value_usd)
+     if (!amd) {
+         amd_inp[0].value = rnd(value_amd)
+     }
+
  }
 
  function calcRub() {
